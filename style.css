@@ -267,8 +267,8 @@ body.card-visible .video-overlay {
 .chat-fab {
     position: fixed;
     /* Positioned to cover the background star */
-    right: 20px;
-    bottom: 50px;
+    right: 50px;
+    bottom: 20px;
     z-index: 95;
     display: inline-flex;
     align-items: center;
