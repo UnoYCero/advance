@@ -1,0 +1,1065 @@
+/* ==========================================
+   ADVANCE LANDING PAGE STYLING SYSTEM
+   ========================================== */
+
+/* Design Tokens & Variables */
+:root {
+    --color-bg: #050507;
+    --color-card-bg: rgba(10, 10, 14, 0.66);
+    --color-card-border: rgba(255, 255, 255, 0.07);
+    --color-text-main: #f3f4f6;
+    --color-text-muted: #9ca3af;
+    
+    /* Neon gradients/glows */
+    --color-primary: #8b5cf6;       /* Electric Violet */
+    --color-primary-rgb: 139, 92, 246;
+    --color-secondary: #06b6d4;     /* Neon Cyan */
+    --color-secondary-rgb: 6, 182, 212;
+    --color-accent: #ec4899;        /* Hot Pink */
+    
+    --font-headings: 'Outfit', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    
+    --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    --transition-fast: all 0.2s ease;
+}
+
+/* Reset & Global */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: var(--color-bg);
+    color: var(--color-text-main);
+    font-family: var(--font-body);
+    overflow-x: hidden;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #09090b;
+}
+::-webkit-scrollbar-thumb {
+    background: #27272a;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary);
+}
+
+/* Custom Cursor (Desktops only) */
+.custom-cursor {
+    width: 28px;
+    height: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    position: fixed;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 9999;
+    transition: width 0.3s, height 0.3s, background-color 0.3s, border-color 0.3s;
+    transition-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
+    display: none;
+}
+
+.custom-cursor-dot {
+    width: 6px;
+    height: 6px;
+    background-color: var(--color-secondary);
+    border-radius: 50%;
+    position: fixed;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.1s;
+    display: none;
+}
+
+@media (pointer: fine) {
+    .custom-cursor, .custom-cursor-dot {
+        display: block;
+    }
+}
+
+/* Active elements interaction with cursor */
+body.hovering-link .custom-cursor {
+    width: 48px;
+    height: 48px;
+    background-color: rgba(var(--color-primary-rgb), 0.1);
+    border-color: var(--color-primary);
+}
+
+/* Video Background Layout - Fixed full screen background for immersive parallax */
+.video-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    z-index: -2;
+}
+
+.video-container video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+    transform: scale(1.05); /* Avoid tiny white margins on resize */
+    will-change: transform;
+}
+
+.video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Vignette and darkening for readability */
+    background: 
+        radial-gradient(circle at 50% 50%, rgba(5, 5, 7, 0.1) 0%, rgba(5, 5, 7, 0.8) 90%),
+        linear-gradient(180deg, rgba(5, 5, 7, 0.9) 0%, rgba(5, 5, 7, 0.2) 15%, rgba(5, 5, 7, 0.2) 85%, rgba(5, 5, 7, 0.9) 100%);
+    z-index: 1;
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 0.12; /* Default very light to show off the render room details when scrolling */
+}
+
+/* Keep the walk-through always visible: only a subtle, continuous dim when a
+   card is active. Text legibility is handled by the card's own glass background
+   (backdrop blur + semi-opaque fill + shadow), so the background never blacks
+   out — you keep "walking through the place" the whole way down. */
+body.card-visible .video-overlay {
+    opacity: 0.3;
+}
+
+/* Intro scrim — darkens the render only while at the top so the solid headline
+   reads clearly. Its opacity is driven down to 0 by JS as you scroll, smoothly
+   revealing the full background. */
+.hero-intro-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+        radial-gradient(circle at 50% 42%, rgba(5, 5, 7, 0.55) 0%, rgba(5, 5, 7, 0.82) 100%);
+    opacity: 1;
+}
+
+/* ==========================================
+   TIMED CARDS CONTROLLER (Desktop Only)
+   ========================================== */
+@media (min-width: 901px) {
+    /* Hide scroll indicator track/progress by default or style it */
+    .scroll-progress-indicator {
+        z-index: 100;
+    }
+
+    /* Fixed positioning for visual content cards */
+    #hero .hero-text-block,
+    .scroll-section .glass-card {
+        position: fixed !important;
+        top: 50% !important;
+        z-index: 20 !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), 
+                    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                    border-color 0.4s ease, box-shadow 0.4s ease !important;
+        will-change: opacity, transform;
+    }
+
+    /* Active visibility state driven by scroll ranges */
+    #hero .hero-text-block.visible,
+    .scroll-section .glass-card.visible {
+        opacity: 1 !important;
+        pointer-events: all !important;
+    }
+
+    /* Centered layout cards (Hero and Contact) */
+    #hero .hero-text-block {
+        left: 50% !important;
+        transform: translate(-50%, -42%) !important;
+        max-width: 800px;
+        width: 90%;
+    }
+    #hero .hero-text-block.visible {
+        transform: translate(-50%, -50%) !important;
+    }
+
+    #contact .glass-card {
+        left: 50% !important;
+        transform: translate(-50%, -42%) !important;
+        max-width: 600px;
+        width: 90%;
+    }
+    #contact .glass-card.visible {
+        transform: translate(-50%, -50%) !important;
+    }
+
+    /* Fluid side positioning for medium desktop displays (901px - 1280px) */
+    #screens .glass-card,
+    #audio .glass-card,
+    #displays .glass-card {
+        right: 6vw !important;
+        left: auto !important;
+        transform: translateY(-42%) !important;
+    }
+    #screens .glass-card.visible,
+    #audio .glass-card.visible,
+    #displays .glass-card.visible {
+        transform: translateY(-50%) !important;
+    }
+
+    #stage .glass-card {
+        left: 6vw !important;
+        right: auto !important;
+        transform: translateY(-42%) !important;
+    }
+    #stage .glass-card.visible {
+        transform: translateY(-50%) !important;
+    }
+
+    /* Pixel-perfect alignment with 1200px centered page grid on larger displays (>1280px) */
+    @media (min-width: 1281px) {
+        #screens .glass-card,
+        #audio .glass-card,
+        #displays .glass-card {
+            right: calc(50vw - 600px + 40px) !important;
+        }
+        #stage .glass-card {
+            left: calc(50vw - 600px + 40px) !important;
+        }
+    }
+
+    /* Specialized drop shadows and colors for card focus states */
+    #screens .glass-card.visible {
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(139, 92, 246, 0.2) !important;
+    }
+    #stage .glass-card.visible {
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(6, 182, 212, 0.2) !important;
+    }
+    #audio .glass-card.visible {
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(236, 72, 153, 0.2) !important;
+    }
+    #displays .glass-card.visible {
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(245, 158, 11, 0.2) !important;
+    }
+
+    /* Fixed height sections to preserve native scroll container heights */
+    .scroll-section {
+        height: 100vh !important;
+        min-height: 100vh !important;
+        position: relative !important;
+    }
+}
+
+/* Floating "Chat with us" button — sits in the bottom-right, just above the
+   render's corner star, and stays fixed while you walk through the scene. */
+.chat-fab {
+    position: fixed;
+    /* Sits just above the render's corner star. Nudge right/bottom to fine-tune
+       on your screen if the star lands at a slightly different spot. */
+    right: 24px;
+    bottom: 40px;
+    z-index: 95;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    border-radius: 50px;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 8px 24px rgba(var(--color-primary-rgb), 0.45);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+}
+
+.chat-fab svg {
+    width: 19px;
+    height: 19px;
+    flex-shrink: 0;
+}
+
+.chat-fab:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(var(--color-primary-rgb), 0.6);
+}
+
+@media (max-width: 600px) {
+    .chat-fab {
+        right: 18px;
+        bottom: 80px;
+        padding: 12px;
+    }
+    /* On small screens collapse to just the icon to keep the view clean */
+    .chat-fab span {
+        display: none;
+    }
+}
+
+/* Navigation Header */
+.main-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+    padding: 20px 0;
+    transition: var(--transition-smooth);
+}
+
+.main-header.scrolled {
+    padding: 12px 0;
+    background: rgba(5, 5, 7, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Logo */
+.logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.logo-img {
+    height: 38px;
+    width: auto;
+    display: block;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.logo:hover .logo-img {
+    transform: scale(1.03);
+}
+
+/* Nav Menu */
+.nav-menu {
+    display: flex;
+    gap: 32px;
+}
+
+.nav-link {
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-muted);
+    text-decoration: none;
+    position: relative;
+    padding: 6px 0;
+    transition: var(--transition-fast);
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+    transition: var(--transition-smooth);
+    transform: translateX(-50%);
+}
+
+.nav-link:hover, .nav-link.active {
+    color: #fff;
+}
+
+.nav-link:hover::after, .nav-link.active::after {
+    width: 100%;
+}
+
+/* Call To Action Buttons */
+.cta-button {
+    text-decoration: none;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    padding: 10px 24px;
+    border-radius: 30px;
+    border: none;
+    box-shadow: 0 4px 15px rgba(var(--color-primary-rgb), 0.3);
+    transition: var(--transition-smooth);
+    cursor: pointer;
+}
+
+.cta-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(var(--color-primary-rgb), 0.5);
+}
+
+/* Scroll Progress Indicators */
+.scroll-progress-indicator {
+    position: fixed;
+    right: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 90;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.scroll-progress-indicator::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: rgba(255, 255, 255, 0.05);
+    z-index: -1;
+}
+
+.progress-bar-fill {
+    position: absolute;
+    top: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--color-primary), var(--color-secondary));
+    z-index: -1;
+    height: 0%;
+}
+
+.scroll-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.step-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.25);
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.step-dot:hover, .step-dot.active {
+    background-color: #fff;
+    transform: scale(1.3);
+    box-shadow: 0 0 10px #fff;
+}
+
+.step-dot.active {
+    border-color: var(--color-primary);
+    background-color: var(--color-bg);
+    box-shadow: 0 0 12px var(--color-primary);
+}
+
+/* Main Scroll Wrapper & Sections */
+.scroll-wrapper {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+}
+
+.scroll-section {
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 100px 10%;
+}
+
+/* Set higher heights for specific scrolling flow */
+#hero {
+    height: 100vh;
+}
+#screens {
+    height: 100vh;
+}
+#stage {
+    height: 100vh;
+}
+#audio {
+    height: 100vh;
+}
+#contact {
+    min-height: 110vh;
+    padding-bottom: 80px;
+}
+
+/* Alignments inside sections */
+.section-content {
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+}
+
+.section-content.center-align {
+    align-items: center;
+    text-align: center;
+}
+
+.section-content.right-align {
+    align-items: flex-end;
+}
+
+.section-content.left-align {
+    align-items: flex-start;
+}
+
+/* Hero elements specific styles */
+.hero-text-block {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.sub-badge {
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: var(--color-secondary);
+    margin-bottom: 24px;
+    display: inline-block;
+    text-shadow: 0 0 15px rgba(6, 182, 212, 0.2);
+}
+
+h1 {
+    font-family: var(--font-headings);
+    font-size: clamp(36px, 6vw, 68px);
+    font-weight: 800;
+    line-height: 1.1;
+    color: #fff;
+    margin-bottom: 24px;
+    letter-spacing: -1px;
+}
+
+h1 span, .gradient-text {
+    background: linear-gradient(135deg, #fff 30%, var(--color-primary) 70%, var(--color-secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Entrance Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade {
+    animation: fadeInUp 0.8s ease forwards;
+    opacity: 0;
+}
+
+.animate-title {
+    /* Solid white instead of a gradient that faded into the bright render,
+       plus a soft shadow so the headline stays legible over any frame. */
+    color: #fff;
+    -webkit-text-fill-color: #fff;
+    background: none;
+    text-shadow: 0 2px 24px rgba(0, 0, 0, 0.55), 0 1px 4px rgba(0, 0, 0, 0.5);
+    animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: 0.2s;
+    opacity: 0;
+}
+
+.animate-desc {
+    animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: 0.4s;
+    opacity: 0;
+}
+
+.animate-buttons {
+    animation: fadeInUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: 0.6s;
+    opacity: 0;
+}
+
+.scroll-section p {
+    font-family: var(--font-body);
+    font-size: clamp(16px, 2vw, 18px);
+    color: var(--color-text-muted);
+    margin-bottom: 40px;
+    max-width: 600px;
+    font-weight: 300;
+}
+
+#hero p {
+    margin-left: auto;
+    margin-right: auto;
+    color: rgba(255, 255, 255, 0.88);
+    text-shadow: 0 1px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* General Button Styles */
+.button-group {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 32px;
+    border-radius: 50px;
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: var(--transition-smooth);
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    color: #fff;
+    border: none;
+    box-shadow: 0 4px 20px rgba(var(--color-primary-rgb), 0.35);
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(var(--color-primary-rgb), 0.55);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.04);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.25);
+    transform: translateY(-3px);
+}
+
+/* Scroll Prompt mouse icon */
+.scroll-prompt {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.prompt-text {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+}
+
+.mouse-icon {
+    width: 24px;
+    height: 40px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    position: relative;
+}
+
+.mouse-wheel {
+    width: 4px;
+    height: 8px;
+    background-color: var(--color-secondary);
+    border-radius: 2px;
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: scroll-wheel-anim 1.8s infinite;
+}
+
+@keyframes scroll-wheel-anim {
+    0% { top: 6px; opacity: 1; }
+    50% { top: 18px; opacity: 0; }
+    100% { top: 6px; opacity: 1; }
+}
+
+/* Glassmorphism Cards */
+.glass-card {
+    background: var(--color-card-bg);
+    border: 1px solid var(--color-card-border);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 16px;
+    padding: 22px 24px;
+    max-width: 330px;
+    width: 100%;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    position: relative;
+    overflow: hidden;
+    transform: translateY(30px);
+    opacity: 0;
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease, border-color 0.4s ease;
+    will-change: transform, opacity;
+}
+
+/* Card Active / Reveal State */
+.glass-card.revealed {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Ambient glow under cards */
+.card-glow {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, rgba(var(--color-primary-rgb), 0.25) 0%, rgba(var(--color-primary-rgb), 0) 70%);
+    top: -75px;
+    left: -75px;
+    pointer-events: none;
+    transition: var(--transition-smooth);
+}
+
+.glass-card:hover {
+    border-color: rgba(var(--color-primary-rgb), 0.45);
+    box-shadow: 0 25px 60px rgba(var(--color-primary-rgb), 0.15);
+}
+
+.glass-card:hover .card-glow {
+    background: radial-gradient(circle, rgba(var(--color-secondary-rgb), 0.35) 0%, rgba(var(--color-secondary-rgb), 0) 70%);
+    top: -50px;
+    left: -50px;
+}
+
+/* Badge inside cards */
+.badge {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--color-secondary);
+    /* No boxed frame — just a subtle text label so the card stays light
+       and the background render keeps the spotlight. */
+    display: inline-block;
+    margin-bottom: 16px;
+}
+
+.glass-card h2 {
+    font-family: var(--font-headings);
+    font-size: clamp(19px, 2.6vw, 25px);
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 12px;
+    line-height: 1.22;
+}
+
+.glass-card p {
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 18px;
+}
+
+/* Specifications list */
+.specs-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+}
+
+.specs-list li {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    font-family: var(--font-body);
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--color-text-muted);
+}
+
+.list-bullet {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--color-primary);
+    box-shadow: 0 0 8px var(--color-primary);
+    margin-top: 8px;
+    flex-shrink: 0;
+}
+
+.specs-list strong {
+    color: #fff;
+    display: block;
+    margin-bottom: 2px;
+}
+
+/* Contact Card and Forms */
+.contact-card {
+    max-width: 750px;
+    width: 100%;
+}
+
+.contact-form {
+    margin-top: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    transition: var(--transition-smooth);
+}
+
+.form-row {
+    display: flex;
+    gap: 24px;
+}
+
+@media (max-width: 600px) {
+    .form-row {
+        flex-direction: column;
+        gap: 24px;
+    }
+}
+
+.input-group {
+    position: relative;
+    width: 100%;
+}
+
+.input-group input,
+.input-group textarea,
+.input-group select {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 16px 20px;
+    border-radius: 12px;
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 15px;
+    outline: none;
+    transition: var(--transition-smooth);
+    appearance: none; /* remove default styling for select */
+    -webkit-appearance: none;
+}
+
+.input-group select {
+    background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 20px center;
+    background-size: 16px;
+    cursor: pointer;
+}
+
+.input-group select option {
+    background-color: #0d0d12;
+    color: #fff;
+}
+
+.input-group label {
+    position: absolute;
+    left: 20px;
+    top: 16px;
+    color: var(--color-text-muted);
+    pointer-events: none;
+    transition: var(--transition-smooth);
+    font-size: 15px;
+}
+
+.input-group input:focus,
+.input-group textarea:focus,
+.input-group select:focus {
+    border-color: var(--color-secondary);
+    box-shadow: 0 0 15px rgba(6, 182, 212, 0.15);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Floating label logic */
+.input-group input:focus ~ label,
+.input-group input:not(:placeholder-shown) ~ label,
+.input-group textarea:focus ~ label,
+.input-group textarea:not(:placeholder-shown) ~ label {
+    top: -10px;
+    left: 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-secondary);
+    background: #0d0d12;
+    padding: 0 8px;
+    border-radius: 4px;
+}
+
+.btn-block {
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-shine {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%);
+    transition: var(--transition-smooth);
+    pointer-events: none;
+}
+
+.btn-primary:hover .btn-shine {
+    left: 200%;
+    transition: all 1s ease-in-out;
+}
+
+.success-message {
+    display: none;
+    text-align: center;
+    padding: 30px 0;
+    animation: fade-in-up 0.5s forwards;
+}
+
+.success-message h4 {
+    font-family: var(--font-headings);
+    font-size: 24px;
+    color: var(--color-secondary);
+    margin-bottom: 12px;
+}
+
+@keyframes fade-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mobile responsive menu */
+.mobile-menu-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 6px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.mobile-menu-toggle .bar {
+    width: 25px;
+    height: 2px;
+    background-color: #fff;
+    transition: var(--transition-smooth);
+}
+
+/* Responsive Overrides */
+@media (max-width: 900px) {
+    .nav-menu {
+        display: none;
+        position: fixed;
+        top: 80px;
+        left: 0;
+        width: 100%;
+        background: rgba(5, 5, 7, 0.95);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        flex-direction: column;
+        align-items: center;
+        padding: 40px 0;
+        gap: 24px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .nav-menu.active {
+        display: flex;
+    }
+
+    .mobile-menu-toggle {
+        display: flex;
+    }
+
+    /* Transform burger icon on active menu */
+    .mobile-menu-toggle.active .bar:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 6px);
+    }
+    .mobile-menu-toggle.active .bar:nth-child(2) {
+        opacity: 0;
+    }
+    .mobile-menu-toggle.active .bar:nth-child(3) {
+        transform: rotate(-45deg) translate(6px, -7px);
+    }
+
+    .header-cta {
+        display: none; /* Hide button on mobile in header, rely on Hero CTA */
+    }
+
+    .scroll-section {
+        padding: 100px 5%;
+        min-height: 100vh;
+        justify-content: center;
+    }
+
+    .section-content.left-align,
+    .section-content.right-align {
+        align-items: center;
+    }
+
+    .glass-card {
+        max-width: 100%;
+    }
+
+    .scroll-progress-indicator {
+        display: none; /* Hide indicator on mobile to clean UI */
+    }
+}
+
+/* Footer styling */
+.main-footer {
+    position: relative;
+    z-index: 10;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    background: #050507;
+    padding: 30px 0;
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px;
+    text-align: center;
+}
+
+.main-footer p {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--color-text-muted);
+}

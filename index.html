@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advance - Diseño Audiovisual & Creación de Eventos</title>
+    <meta name="description" content="Advance es una productora premium de diseño audiovisual y eventos interactivos. Descubre nuestras pantallas LED, banners y tecnologías inmersivas.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Video Background Container -->
+    <div class="video-container">
+        <video id="bg-video" preload="auto" muted playsinline></video>
+        <div class="video-overlay"></div>
+    </div>
+
+    <!-- Intro scrim: dims the background at the very top for headline legibility,
+         then fades out as you start scrolling to reveal the full render -->
+    <div class="hero-intro-scrim" id="hero-scrim"></div>
+
+    <!-- Custom Cursor -->
+    <div class="custom-cursor"></div>
+    <div class="custom-cursor-dot"></div>
+
+    <!-- Floating Chat Button (bottom-right, above the render's corner star) -->
+    <!-- Replace href with your WhatsApp link, e.g. https://wa.me/521XXXXXXXXXX -->
+    <a href="#contact" class="chat-fab" id="chat-fab" aria-label="Chatea con nosotros">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Chatea con nosotros</span>
+    </a>
+
+    <!-- Header Navigation -->
+    <header class="main-header">
+        <div class="header-container">
+            <a href="#" class="logo" id="header-logo">
+                <img src="logo.png" alt="Advance Producciones & Entretenimiento" class="logo-img">
+            </a>
+            <nav class="nav-menu">
+                <a href="#hero" class="nav-link active" id="nav-hero-link">Inicio</a>
+                <a href="#screens" class="nav-link" id="nav-screens-link">Pantallas & Banners</a>
+                <a href="#stage" class="nav-link" id="nav-stage-link">Escenarios</a>
+                <a href="#audio" class="nav-link" id="nav-audio-link">Iluminación & Audio</a>
+                <a href="#displays" class="nav-link" id="nav-displays-link">Displays</a>
+                <a href="#contact" class="nav-link" id="nav-contact-link">Contacto</a>
+            </nav>
+            <a href="#contact" class="cta-button header-cta" id="header-cta-btn">Diseñar Evento</a>
+            
+            <button class="mobile-menu-toggle" id="menu-toggle" aria-label="Abrir menú">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Scroll Indicator (Fixed) -->
+    <div class="scroll-progress-indicator">
+        <div class="progress-bar-fill" id="progress-bar"></div>
+        <div class="scroll-steps">
+            <span class="step-dot active" data-target="hero"></span>
+            <span class="step-dot" data-target="screens"></span>
+            <span class="step-dot" data-target="stage"></span>
+            <span class="step-dot" data-target="audio"></span>
+            <span class="step-dot" data-target="displays"></span>
+            <span class="step-dot" data-target="contact"></span>
+        </div>
+    </div>
+
+    <!-- Scroll Content Wrapper -->
+    <main class="scroll-wrapper">
+
+        <!-- SECTION 1: HERO -->
+        <section class="scroll-section" id="hero">
+            <div class="section-content center-align">
+                <div class="hero-text-block">
+                    <span class="sub-badge animate-fade">ADVANCE / PRODUCTORA GENERAL</span>
+                    <h1 class="animate-title">Creamos Escenarios Que Inspiran</h1>
+                    <p class="animate-desc">Diseño audiovisual y producción de eventos de vanguardia. Cada detalle técnico es planeado y ejecutado milimétricamente.</p>
+                    <div class="button-group animate-buttons">
+                        <a href="#screens" class="btn btn-primary" id="hero-explore-btn">Explorar Renders</a>
+                        <a href="#contact" class="btn btn-secondary" id="hero-contact-btn">Hablemos</a>
+                    </div>
+                </div>
+                <div class="scroll-prompt">
+                    <span class="prompt-text">Haz scroll para navegar en el render</span>
+                    <div class="mouse-icon">
+                        <div class="mouse-wheel"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: SCREENS & BANNERS -->
+        <section class="scroll-section" id="screens">
+            <div class="section-content right-align">
+                <div class="glass-card reveal-card" data-tilt>
+                    <div class="card-glow"></div>
+                    <span class="badge">Pantallas & Banners</span>
+                    <h2>Sistemas de Visualización Digital</h2>
+                    <p>En el render a la derecha se puede observar el despliegue de pantallas LED de alta densidad y tótems verticales (banners) integrados dinámicamente en los laterales del escenario.</p>
+                    <ul class="specs-list">
+                        <li>
+                            <span class="list-bullet"></span>
+                            <div>
+                                <strong>Pantallas LED Premium:</strong> Paneles P2.5 de alta frecuencia para transmisiones nítidas de cámara y video.
+                            </div>
+                        </li>
+                        <li>
+                            <span class="list-bullet"></span>
+                            <div>
+                                <strong>Banners Verticales:</strong> Tótems digitales ideales para patrocinadores, marcas y efectos visuales sincronizados.
+                            </div>
+                        </li>
+                        <li>
+                            <span class="list-bullet"></span>
+                            <div>
+                                <strong>Integración Estética:</strong> Diseño modular empotrado sin cables a la vista para una apariencia elegante.
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: STAGE & SCENIC DESIGN -->
+        <section class="scroll-section" id="stage">
+            <div class="section-content left-align">
+                <div class="glass-card reveal-card" data-tilt>
+                    <div class="card-glow"></div>
+                    <span class="badge">Diseño Escenográfico</span>
+                    <h2>Arquitectura de Escenario</h2>
+                    <p>Estructuras sólidas y limpias con tarimas de varios niveles. Diseñamos espacios que dirigen la atención del público hacia el centro de la acción.</p>
+                    <ul class="specs-list">
+                        <li>
+                            <span class="list-bullet"></span>
+                            <div>
+                                <strong>Geometría Moderna:</strong> Líneas angulares y acabados oscuros mate que absorben la luz reflectante.
+                            </div>
+                        </li>
+                        <li>
+                            <span class="list-bullet"></span>
+                            <div>
+                                <strong>Distribución Espacial:</strong> Acceso seguro y rampas ocultas integradas para oradores y personalidades.
+                            </div>
+                        </li>
+                        <li>
+                            <span class="list-bullet"></span>
+                            <div>
+                                <strong>Materiales Premium:</strong> Estructura robusta de alta capacidad con texturas adaptables al branding del evento.
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: LIGHTING & AUDIO -->
+        <section class="scroll-section" id="audio">
+            <div class="section-content right-align">
+                <div class="glass-card reveal-card" data-tilt>
+                    <div class="card-glow"></div>
+                    <span class="badge">Audiovisual de Alta Gama</span>
+                    <h2>Iluminación y Acústica</h2>
+                    <p>Diseño de iluminación inteligente robótica instalada en estructuras de truss traseras y superiores, complementada con sistemas de sonido Line Array.</p>
+                    <ul class="specs-list">
+                        <li>
+                            <span class="list-bullet"></span>
+                            <div>
+                                <strong>Robótica Inteligente:</strong> Spots, Beams y Washers programados en código de tiempo (timecode) para sincronía perfecta.
+                            </div>
+                        </li>
+                        <li>
+                            <span class="list-bullet"></span>
+                            <div>
+                                <strong>Audio Line Array:</strong> Cobertura acústica uniforme que garantiza claridad de voz y música en cada rincón.
+                            </div>
+                        </li>
+                        <li>
+                            <span class="list-bullet"></span>
+                            <div>
+                                <strong>Estructuras de Soporte:</strong> Torres y trusses en color negro mate que se fusionan con la oscuridad del recinto.
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: CUSTOM DISPLAYS / REGISTRATION -->
+        <section class="scroll-section" id="displays">
+            <div class="section-content right-align">
+                <div class="glass-card reveal-card" data-tilt>
+                    <div class="card-glow"></div>
+                    <span class="badge">Displays a la Medida</span>
+                    <h2>Armamos tu display a la medida de tus eventos</h2>
+                    <p>Como el módulo de registro del render, diseñamos y fabricamos mostradores, counters y displays de marca totalmente personalizados, integrados al lenguaje visual de tu evento.</p>
+                    <ul class="specs-list">
+                        <li>
+                            <span class="list-bullet"></span>
+                            <div>
+                                <strong>Registro & Recepción:</strong> Módulos tipo counter con iluminación integrada y branding de tu marca para recibir a los asistentes.
+                            </div>
+                        </li>
+                        <li>
+                            <span class="list-bullet"></span>
+                            <div>
+                                <strong>Fabricación a Medida:</strong> Estructuras únicas adaptadas a tu espacio, logística y flujo de público.
+                            </div>
+                        </li>
+                        <li>
+                            <span class="list-bullet"></span>
+                            <div>
+                                <strong>Acabados Premium:</strong> Materiales y texturas que reflejan la identidad visual de cada evento.
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 6: CONTACT & ESTIMATE -->
+        <section class="scroll-section" id="contact">
+            <div class="section-content center-align">
+                <div class="glass-card reveal-card contact-card">
+                    <div class="card-glow"></div>
+                    <span class="badge">Contacto</span>
+                    <h2>Crea Tu Próxima Experiencia</h2>
+                    <p>Platícanos sobre tu evento. Nuestro equipo técnico y de diseño se encargará de modelar, planificar y materializar tu visión en un render hiperrealista.</p>
+                    
+                    <form class="contact-form" id="event-contact-form">
+                        <div class="form-row">
+                            <div class="input-group">
+                                <input type="text" id="contact-name" required placeholder=" ">
+                                <label for="contact-name">Nombre Completo</label>
+                            </div>
+                            <div class="input-group">
+                                <input type="email" id="contact-email" required placeholder=" ">
+                                <label for="contact-email">Correo Electrónico</label>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <select id="contact-service" required>
+                                <option value="" disabled selected hidden>Selecciona el servicio principal</option>
+                                <option value="evento_completo">Producción Integral de Evento</option>
+                                <option value="diseno_audiovisual">Diseño Audiovisual (Pantallas/Audio/Luces)</option>
+                                <option value="diseno_escenario">Diseño de Escenario & Renders</option>
+                                <option value="otro">Otro Requerimiento</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <textarea id="contact-message" rows="4" required placeholder=" "></textarea>
+                            <label for="contact-message">Detalles de tu evento (tipo, fecha aproximada, locación...)</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block" id="contact-submit-btn">
+                            <span>Solicitar Cotización</span>
+                            <div class="btn-shine"></div>
+                        </button>
+                    </form>
+                    <div id="form-success-msg" class="success-message">
+                        <h4>¡Mensaje Recibido!</h4>
+                        <p>Nos pondremos en contacto contigo en menos de 24 horas para comenzar a diseñar tu evento.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <p>&copy; 2026 Advance. Todos los derechos reservados. Producción y Diseño Audiovisual de Vanguardia.</p>
+        </div>
+    </footer>
+
+    <!-- App JS Logic -->
+    <script src="app.js"></script>
+</body>
+</html>
