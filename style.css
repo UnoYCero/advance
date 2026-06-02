@@ -266,34 +266,34 @@ body.card-visible .video-overlay {
    render's corner star, and stays fixed while you walk through the scene. */
 .chat-fab {
     position: fixed;
-    /* Sits just above the render's corner star. Nudge right/bottom to fine-tune
-       on your screen if the star lands at a slightly different spot. */
-    right: 24px;
-    bottom: 40px;
+    /* Positioned to cover the background star */
+    right: 20px;
+    bottom: 50px;
     z-index: 95;
     display: inline-flex;
     align-items: center;
-    gap: 10px;
-    padding: 12px 20px;
-    border-radius: 50px;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
     background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
     color: #fff;
-    font-family: var(--font-body);
-    font-size: 14px;
-    font-weight: 600;
-    text-decoration: none;
     box-shadow: 0 8px 24px rgba(var(--color-primary-rgb), 0.45);
     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
 }
 
 .chat-fab svg {
-    width: 19px;
-    height: 19px;
+    width: 26px;
+    height: 26px;
     flex-shrink: 0;
 }
 
+.chat-fab span {
+    display: none;
+}
+
 .chat-fab:hover {
-    transform: translateY(-3px);
+    transform: translateY(-3px) scale(1.05);
     box-shadow: 0 12px 32px rgba(var(--color-primary-rgb), 0.6);
 }
 
@@ -301,11 +301,12 @@ body.card-visible .video-overlay {
     .chat-fab {
         right: 18px;
         bottom: 80px;
-        padding: 12px;
+        width: 50px;
+        height: 50px;
     }
-    /* On small screens collapse to just the icon to keep the view clean */
-    .chat-fab span {
-        display: none;
+    .chat-fab svg {
+        width: 22px;
+        height: 22px;
     }
 }
 
