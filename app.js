@@ -36,10 +36,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateCardVisibilities(scrollFraction) {
         let anyVisible = false;
+        const isPastWalkthrough = document.body.classList.contains('in-content-sections');
+
         ranges.forEach(range => {
             const element = document.querySelector(range.selector);
             if (element) {
-                if (scrollFraction >= range.start && scrollFraction <= range.end) {
+                if (!isPastWalkthrough && scrollFraction >= range.start && scrollFraction <= range.end) {
                     element.classList.add('visible');
                     anyVisible = true;
                 } else {
@@ -49,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Set state on body to adjust background darkening overlay
-        if (anyVisible) {
+        if (anyVisible && !isPastWalkthrough) {
             document.body.classList.add('card-visible');
         } else {
             document.body.classList.remove('card-visible');
@@ -61,7 +63,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
         if (scrollHeight <= 0) return;
         
-        const scrollFraction = window.scrollY / scrollHeight;
+        const totalScrollFraction = window.scrollY / scrollHeight;
+        
+        // Find where the walkthrough video ends: offsetTop of #about section
+        const aboutSection = document.getElementById('about');
+        const walkthroughEndOffset = aboutSection ? (aboutSection.offsetTop - window.innerHeight) : scrollHeight;
+        
+        let scrollFraction = 0;
+        if (window.scrollY < walkthroughEndOffset) {
+            scrollFraction = window.scrollY / walkthroughEndOffset;
+            document.body.classList.remove('in-content-sections');
+        } else {
+            scrollFraction = 1.0;
+            document.body.classList.add('in-content-sections');
+        }
         
         if (!isNaN(video.duration) && video.duration > 0) {
             targetTime = scrollFraction * video.duration;
@@ -78,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Update fixed vertical progress bar height
-        const progressPercentage = scrollFraction * 100;
+        const progressPercentage = totalScrollFraction * 100;
         if (progressBar) {
             progressBar.style.height = `${progressPercentage}%`;
         }
@@ -139,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const observerOptions = {
         root: null,
         rootMargin: '0px',
-        threshold: 0.35 // Trigger when 35% of the section is visible
+        threshold: 0.20 // Trigger when 20% of the section is visible
     };
 
     const observer = new IntersectionObserver((entries) => {
@@ -160,8 +175,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, observerOptions);
 
-    // Observe each section
-    document.querySelectorAll('.scroll-section').forEach(section => {
+    // Observe each section (including new content sections)
+    document.querySelectorAll('.scroll-section, .content-section').forEach(section => {
         observer.observe(section);
     });
 
@@ -317,4 +332,239 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // 9. CONTENT PARTICLES CANVAS BACKGROUND
+    const particleCanvas = document.getElementById('content-particles-canvas');
+    if (particleCanvas) {
+        const ctx = particleCanvas.getContext('2d');
+        let particles = [];
+        let width = window.innerWidth;
+        let height = window.innerHeight;
+
+        particleCanvas.width = width;
+        particleCanvas.height = height;
+
+        window.addEventListener('resize', () => {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            particleCanvas.width = width;
+            particleCanvas.height = height;
+        });
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = Math.random() * 0.4 - 0.2;
+                this.speedY = Math.random() * 0.4 - 0.2;
+                this.alpha = Math.random() * 0.4 + 0.1;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x < 0 || this.x > width || this.y < 0 || this.y > height) {
+                    this.reset();
+                }
+            }
+
+            draw() {
+                ctx.fillStyle = `rgba(139, 92, 246, ${this.alpha})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        const numParticles = 60;
+        for (let i = 0; i < numParticles; i++) {
+            particles.push(new Particle());
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, width, height);
+            
+            if (document.body.classList.contains('in-content-sections')) {
+                particles.forEach(p => {
+                    p.update();
+                    p.draw();
+                });
+            }
+
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+    }
+
+    // 10. CONNECTED AUDIO NODES CANVAS ANIMATION (QUIÉNES SOMOS)
+    const aboutCanvas = document.getElementById('about-canvas');
+    if (aboutCanvas) {
+        const actx = aboutCanvas.getContext('2d');
+        let width = aboutCanvas.offsetWidth;
+        let height = aboutCanvas.offsetHeight;
+        
+        aboutCanvas.width = width;
+        aboutCanvas.height = height;
+
+        let nodes = [];
+        const numNodes = 12;
+
+        const resizeObserver = new ResizeObserver(entries => {
+            for (let entry of entries) {
+                width = entry.contentRect.width;
+                height = entry.contentRect.height;
+                aboutCanvas.width = width;
+                aboutCanvas.height = height;
+                initNodes();
+            }
+        });
+        resizeObserver.observe(aboutCanvas.parentElement);
+
+        class AudioNode {
+            constructor(id) {
+                this.id = id;
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.radius = Math.random() * 4 + 3;
+                this.vx = Math.random() * 0.6 - 0.3;
+                this.vy = Math.random() * 0.6 - 0.3;
+                this.pulsePhase = Math.random() * Math.PI * 2;
+                this.pulseSpeed = Math.random() * 0.05 + 0.02;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.pulsePhase += this.pulseSpeed;
+
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+            }
+
+            draw() {
+                const scale = 1 + Math.sin(this.pulsePhase) * 0.3;
+                actx.beginPath();
+                actx.arc(this.x, this.y, this.radius * scale, 0, Math.PI * 2);
+                actx.fillStyle = this.id % 2 === 0 ? '#8b5cf6' : '#06b6d4';
+                actx.shadowBlur = 10;
+                actx.shadowColor = actx.fillStyle;
+                actx.fill();
+                actx.shadowBlur = 0;
+            }
+        }
+
+        function initNodes() {
+            nodes = [];
+            for (let i = 0; i < numNodes; i++) {
+                nodes.push(new AudioNode(i));
+            }
+        }
+
+        function drawConnections() {
+            actx.clearRect(0, 0, width, height);
+            
+            nodes.forEach(n => {
+                n.update();
+                n.draw();
+            });
+
+            actx.lineWidth = 1;
+            for (let i = 0; i < nodes.length; i++) {
+                for (let j = i + 1; j < nodes.length; j++) {
+                    const dx = nodes[i].x - nodes[j].x;
+                    const dy = nodes[i].y - nodes[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < 150) {
+                        const alpha = (1 - dist / 150) * 0.25;
+                        const grad = actx.createLinearGradient(nodes[i].x, nodes[i].y, nodes[j].x, nodes[j].y);
+                        grad.addColorStop(0, `rgba(139, 92, 246, ${alpha})`);
+                        grad.addColorStop(1, `rgba(6, 182, 212, ${alpha})`);
+                        
+                        actx.strokeStyle = grad;
+                        actx.beginPath();
+                        actx.moveTo(nodes[i].x, nodes[i].y);
+                        actx.lineTo(nodes[j].x, nodes[j].y);
+                        actx.stroke();
+                    }
+                }
+            }
+
+            requestAnimationFrame(drawConnections);
+        }
+        
+        initNodes();
+        drawConnections();
+    }
+
+    // 11. ANIMATED STATS COUNTER SYSTEM
+    const statsObserverOptions = {
+        root: null,
+        threshold: 0.3
+    };
+
+    const statsObserver = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const numbers = entry.target.querySelectorAll('.stat-number');
+                numbers.forEach(num => {
+                    const target = parseInt(num.getAttribute('data-target'), 10);
+                    const duration = 2000;
+                    const startTime = performance.now();
+
+                    function updateNumber(now) {
+                        const elapsed = now - startTime;
+                        const progress = Math.min(elapsed / duration, 1);
+                        const easeProgress = progress * (2 - progress);
+                        const current = Math.floor(easeProgress * target);
+                        
+                        num.textContent = current;
+
+                        if (progress < 1) {
+                            requestAnimationFrame(updateNumber);
+                        } else {
+                            num.textContent = target;
+                        }
+                    }
+
+                    requestAnimationFrame(updateNumber);
+                });
+                obs.unobserve(entry.target);
+            }
+        });
+    }, statsObserverOptions);
+
+    const statsSection = document.getElementById('experience');
+    if (statsSection) {
+        statsObserver.observe(statsSection);
+    }
+
+    // 12. ANIMATE ON SCROLL REVEAL OBSERVER
+    const revealObserverOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.10
+    };
+
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+            }
+        });
+    }, revealObserverOptions);
+
+    document.querySelectorAll('.animate-reveal').forEach(el => {
+        revealObserver.observe(el);
+    });
 });
