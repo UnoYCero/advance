@@ -288,22 +288,33 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    // 7. MOBILE MENU BURGER LOGIC
+    // 7. MENU BURGER & DRAWER LOGIC
     const menuToggle = document.getElementById('menu-toggle');
     const navMenu = document.querySelector('.nav-menu');
+    const menuOverlay = document.getElementById('menu-overlay');
     
     if (menuToggle && navMenu) {
-        menuToggle.addEventListener('click', () => {
+        const toggleMenu = () => {
             menuToggle.classList.toggle('active');
             navMenu.classList.toggle('active');
-        });
+            if (menuOverlay) menuOverlay.classList.toggle('active');
+        };
+
+        const closeMenu = () => {
+            menuToggle.classList.remove('active');
+            navMenu.classList.remove('active');
+            if (menuOverlay) menuOverlay.classList.remove('active');
+        };
+
+        menuToggle.addEventListener('click', toggleMenu);
+        
+        if (menuOverlay) {
+            menuOverlay.addEventListener('click', closeMenu);
+        }
         
         // Close menu upon click of links
         document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', () => {
-                menuToggle.classList.remove('active');
-                navMenu.classList.remove('active');
-            });
+            link.addEventListener('click', closeMenu);
         });
     }
 

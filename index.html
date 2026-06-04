@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
 
@@ -40,28 +40,64 @@
     <!-- Header Navigation -->
     <header class="main-header">
         <div class="header-container">
-            <a href="#" class="logo" id="header-logo">
-                <img src="logo.png" alt="Advance Producciones & Entretenimiento" class="logo-img">
-            </a>
-            <nav class="nav-menu">
+            <div class="logo-group">
+                <button class="mobile-menu-toggle" id="menu-toggle" aria-label="Abrir menú">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </button>
+                <a href="#" class="logo" id="header-logo">
+                    <img src="logo.png" alt="Advance Producciones & Entretenimiento" class="logo-img">
+                </a>
+            </div>
+            
+            <!-- Horizontal menu visible only on desktop -->
+            <nav class="horizontal-menu">
                 <a href="#hero" class="nav-link active" id="nav-hero-link">Inicio</a>
-                <a href="#screens" class="nav-link" id="nav-screens-link">Pantallas & Banners</a>
-                <a href="#stage" class="nav-link" id="nav-stage-link">Escenarios</a>
-                <a href="#audio" class="nav-link" id="nav-audio-link">Iluminación & Audio</a>
-                <a href="#displays" class="nav-link" id="nav-displays-link">Displays</a>
-                <a href="#contact" class="nav-link" id="nav-contact-link">Contacto</a>
                 <a href="#about" class="nav-link" id="nav-about-link">Nosotros</a>
                 <a href="#services" class="nav-link" id="nav-services-link">Servicios</a>
+                <a href="#contact" class="nav-link" id="nav-contact-link">Contacto</a>
             </nav>
-            <a href="#contact" class="cta-button header-cta" id="header-cta-btn">Diseñar Evento</a>
             
-            <button class="mobile-menu-toggle" id="menu-toggle" aria-label="Abrir menú">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
-            </button>
+            <nav class="nav-menu">
+                <div class="drawer-links">
+                    <!-- Mobile only links inside drawer -->
+                    <div class="mobile-only-links">
+                        <a href="#hero" class="nav-link" id="drawer-hero-link">Inicio</a>
+                        <a href="#about" class="nav-link" id="drawer-about-link">Nosotros</a>
+                        <a href="#services" class="nav-link" id="drawer-services-link">Servicios</a>
+                        <a href="#contact" class="nav-link" id="drawer-contact-link">Contacto</a>
+                        <div class="drawer-subdivider"></div>
+                    </div>
+                    
+                    <a href="#experience" class="nav-link drawer-special-link" id="drawer-experience-link">Eventos hechos por nosotros</a>
+                    <a href="#contact" class="nav-link drawer-special-link" id="drawer-venues-link">Nuestros venues</a>
+                </div>
+                
+                <div class="drawer-divider"></div>
+                
+                <div class="drawer-info">
+                    <div class="drawer-info-item">
+                        <span class="info-label">Contacto</span>
+                        <a href="mailto:info@advanceproducciones.com" class="info-link">info@advanceproducciones.com</a>
+                        <a href="tel:+526641234567" class="info-link">+52 (664) 123-4567</a>
+                    </div>
+                    <div class="drawer-info-item">
+                        <span class="info-label">Síguenos</span>
+                        <div class="drawer-socials">
+                            <a href="#" class="social-icon-link" aria-label="Instagram">IG</a>
+                            <a href="#" class="social-icon-link" aria-label="Facebook">FB</a>
+                            <a href="#" class="social-icon-link" aria-label="YouTube">YT</a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            
+            <a href="#contact" class="cta-button header-cta" id="header-cta-btn">Diseñar Evento</a>
         </div>
     </header>
+    
+    <div class="menu-overlay" id="menu-overlay"></div>
 
     <!-- Scroll Indicator (Fixed) -->
     <div class="scroll-progress-indicator">
@@ -369,7 +405,7 @@
 
         <!-- SECTION 9: SERVICIOS -->
         <section class="content-section" id="services">
-            <div class="section-content">
+            <div class="section-content center-align">
                 <span class="badge">Servicios</span>
                 <h2 class="section-title">Soluciones integrales para eventos extraordinarios</h2>
                 <div class="services-grid">
@@ -431,7 +467,7 @@
 
         <!-- SECTION 10: EXPERIENCIA ADVANCE -->
         <section class="content-section" id="experience">
-            <div class="section-content">
+            <div class="section-content center-align">
                 <span class="badge">Experiencia Advance</span>
                 <h2 class="section-title">Cada evento es una oportunidad para crear algo inolvidable</h2>
                 <div class="stats-grid">
@@ -529,6 +565,6 @@
     <canvas id="content-particles-canvas"></canvas>
 
     <!-- App JS Logic -->
-    <script src="app.js"></script>
+    <script src="app.js?v=3"></script>
 </body>
 </html>
